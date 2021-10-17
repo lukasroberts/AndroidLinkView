@@ -16,5 +16,5 @@ interface IOpenGraphMetaDataProvider {
      *
      * @param link - the link for which you would like to receive metadata for
      */
-    fun startFetchingMetadata(link: URL) : OpenGraphMetaData?
+    fun startFetchingMetadata(link: URL) : OpenGraphMetaData
 }

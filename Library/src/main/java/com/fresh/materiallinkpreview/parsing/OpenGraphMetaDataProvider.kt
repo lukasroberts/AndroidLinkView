@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
@@ -18,19 +17,37 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
 
     override suspend fun startFetchingMetadataAsync(link: URL): Result<OpenGraphMetaData> {
         return withContext(Dispatchers.IO) {
-             val metaData = startFetchingMetadata(link)
+            val metaData = startFetchingMetadata(link)
 
-            if(metaData != null) {
-                return@withContext Result.success(metaData)
-            } else {
-                return@withContext Result.failure(Exception())
-            }
+            return@withContext Result.success(metaData)
         }
     }
 
-    override fun startFetchingMetadata(link: URL): OpenGraphMetaData? {
+    override fun startFetchingMetadata(link: URL): OpenGraphMetaData {
         // first only, get the head element of the webpage, as we do not want to download the entire thing!
-        val httpUrlConnection = link.openConnection() as HttpURLConnection
+        var httpUrlConnection = link.openConnection() as HttpURLConnection
+
+        if(link.protocol == "http") {
+            // check for any potential re-directs and perform them
+            var redirect = false
+
+            // normally, 3xx is redirect
+            if (httpUrlConnection.responseCode != HttpURLConnection.HTTP_OK) {
+                if (httpUrlConnection.responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+                    || httpUrlConnection.responseCode == HttpURLConnection.HTTP_MOVED_PERM
+                    || httpUrlConnection.responseCode == HttpURLConnection.HTTP_SEE_OTHER){
+                    redirect = true
+                }
+            }
+
+            if(redirect) {
+                val redirectUrl = httpUrlConnection.getHeaderField("Location")
+
+                if(!redirectUrl.isNullOrEmpty()) {
+                    httpUrlConnection = URL(redirectUrl).openConnection() as HttpURLConnection
+                }
+            }
+        }
 
         val charset = getConnectionCharset(httpUrlConnection)
         val bufferedInput = BufferedReader(InputStreamReader(httpUrlConnection.inputStream, charset))
@@ -58,7 +75,7 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
         // try and identify any namespace information if it exists
         if(document.head().hasAttr("prefix")) {
             val prefixElements = document.head().getElementsByAttribute("prefix").html()
-            val pattern = Pattern.compile("(([A-Za-z0-9_]+):\\s+(http://ogp.me/ns(/\\w+)*#))\\s*")
+            val pattern = Pattern.compile("(([A-Za-z0-9_]+):\\s+(https://ogp.me/ns(/\\w+)*#))\\s*")
             val matcher = pattern.matcher(prefixElements)
 
             while (matcher.find()) {
@@ -123,9 +140,8 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
      *         if it's not found then the default charset.
      */
     private fun getConnectionCharset(connection: HttpURLConnection): Charset? {
-        var contentType: String = connection.contentType
-        if (contentType.isNotEmpty()) {
-            contentType = contentType.lowercase()
+        if (!connection.contentType.isNullOrEmpty()) {
+            val contentType = connection.contentType.lowercase()
             val charsetName = extractCharsetName(contentType)
             if (!charsetName.isNullOrEmpty()) {
                 try {
