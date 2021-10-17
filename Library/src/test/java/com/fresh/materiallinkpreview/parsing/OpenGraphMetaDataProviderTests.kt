@@ -40,5 +40,12 @@ class OpenGraphMetaDataProviderTests {
         assertThat(validHttpRequest.type).isEqualTo("website")
         assertThat(validHttpRequest.imageUrl).isEqualTo("")
         assertThat(validHttpRequest.description).isEqualTo("The best of the BBC, with the latest news and sport headlines, weather, TV & radio highlights and much more from across the whole of BBC Online.")
+
+        val validHttpRequestWithNoWWW = metaDataProvider.startFetchingMetadata(java.net.URL("http://bbc.co.uk"))
+        assertThat(validHttpRequestWithNoWWW.url).isEqualTo("https://www.bbc.co.uk/")
+        assertThat(validHttpRequestWithNoWWW.title).isEqualTo("BBC - Home")
+        assertThat(validHttpRequestWithNoWWW.type).isEqualTo("website")
+        assertThat(validHttpRequestWithNoWWW.imageUrl).isEqualTo("")
+        assertThat(validHttpRequestWithNoWWW.description).isEqualTo("The best of the BBC, with the latest news and sport headlines, weather, TV & radio highlights and much more from across the whole of BBC Online.")
     }
 }

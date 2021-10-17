@@ -17,9 +17,12 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
 
     override suspend fun startFetchingMetadataAsync(link: URL): Result<OpenGraphMetaData> {
         return withContext(Dispatchers.IO) {
-            val metaData = startFetchingMetadata(link)
-
-            return@withContext Result.success(metaData)
+            try{
+                val metaData = startFetchingMetadata(link)
+                return@withContext Result.success(metaData)
+            } catch(e : Exception) {
+                return@withContext Result.failure(e)
+            }
         }
     }
 
