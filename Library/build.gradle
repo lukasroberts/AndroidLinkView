@@ -32,7 +32,7 @@ android {
         jvmTarget = '1.8'
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.0.1'
+        kotlinCompilerExtensionVersion '1.0.5'
     }
     lintOptions {
         textReport true
@@ -67,9 +67,6 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:$composeVersion")
     // Material Design
     implementation("androidx.compose.material:material:$composeVersion")
-    // Integration with observables
-    implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
     implementation ("org.jsoup:jsoup:1.14.3")
 
