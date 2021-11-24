@@ -3,6 +3,7 @@ package com.fresh.sampleproject
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,15 +20,22 @@ import com.fresh.materiallinkpreview.R
 import com.fresh.materiallinkpreview.models.OpenGraphMetaData
 import com.fresh.materiallinkpreview.ui.CardLinkPreview
 import com.fresh.sampleproject.ui.theme.MaterialLinkPreviewTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel : MainActivityViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.downloadMetaData()
+
         setContent {
             MaterialLinkPreviewTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    MainActivityScreen()
+                    MainActivityScreen(viewModel)
                 }
             }
         }
@@ -35,7 +43,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainActivityScreen(mainActivityViewModel: MainActivityViewModel = viewModel()) {
+fun MainActivityScreen(mainActivityViewModel: MainActivityViewModel) {
     val metaDataList by mainActivityViewModel.metaDataList.observeAsState()
     metaDataList?.let { LinkPreviewList(it) }
 }

@@ -99,6 +99,7 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
         }
 
         val metaElements = document.head().getElementsByTag("meta")
+        val titleElement = document.head().getElementsByTag("title")
         val openGraphMetaData = OpenGraphMetaData()
 
         // go through every meta element that we have collected, and try to identify any open graph tags
@@ -127,6 +128,10 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
                     break
                 }
             }
+        }
+
+        if(openGraphMetaData.title.isEmpty() && titleElement.count() == 1) {
+            openGraphMetaData.title = titleElement[0].childNode(0).toString()
         }
 
         return openGraphMetaData

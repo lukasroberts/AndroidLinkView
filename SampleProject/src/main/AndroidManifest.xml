@@ -3,6 +3,7 @@
     package="com.fresh.sampleproject">
 
     <application
+        android:name=".SampleProjectApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,7 +17,6 @@
             android:theme="@style/Theme.MaterialLinkPreview.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
