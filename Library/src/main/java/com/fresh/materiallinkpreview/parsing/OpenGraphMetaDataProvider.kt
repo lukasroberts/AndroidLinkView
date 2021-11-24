@@ -134,6 +134,10 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
             openGraphMetaData.title = titleElement[0].childNode(0).toString()
         }
 
+        if(openGraphMetaData.url.isEmpty()) {
+            openGraphMetaData.url = link.toString()
+        }
+
         return openGraphMetaData
     }
 

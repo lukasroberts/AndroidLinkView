@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
@@ -12,10 +13,11 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberImagePainter
 import com.fresh.materiallinkpreview.R
 import com.fresh.materiallinkpreview.models.OpenGraphMetaData
 import com.fresh.materiallinkpreview.ui.CardLinkPreview
@@ -34,7 +36,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialLinkPreviewTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
+                Surface(color = MaterialTheme.colors.background, modifier = Modifier.fillMaxHeight()) {
                     MainActivityScreen(viewModel)
                 }
             }
@@ -54,7 +56,11 @@ fun LinkPreviewList(metaDataList : List<OpenGraphMetaData>) {
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         items(metaDataList) { metaData ->
-            CardLinkPreview(painterResource(R.drawable.ic_baseline_photo_24), metaData)
+            if(metaData.imageUrl.isNotEmpty()) {
+                CardLinkPreview(metaData, rememberImagePainter(metaData.imageUrl))
+            } else {
+                CardLinkPreview(metaData)
+            }
         }
     }
 }

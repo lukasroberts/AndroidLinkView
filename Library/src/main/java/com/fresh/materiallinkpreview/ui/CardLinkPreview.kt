@@ -26,22 +26,21 @@ private fun PreviewCardLink() {
         shapes = MaterialTheme.shapes
     ) {
         CardLinkPreview(
-            painterResource(R.drawable.ic_baseline_photo_24),
             OpenGraphMetaData(
                 title = "Find the cheapest PCR tests for traveling overseas",
                 description = "Not sure about which covid tests you need to travel abroad. Some destinations require you to take a test before leaving the UK and can be expensive for families. Use money saving experts tips to lower costs.",
                 url = "www.moneysavingexpert.com",
                 imageUrl = "",
                 type = ""
-            )
-        )
+            ),
+            painterResource(R.drawable.ic_baseline_photo_24))
     }
 }
 
 @Composable
 fun CardLinkPreview(
-    imagePainter: Painter,
     openGraphMetaData: OpenGraphMetaData,
+    imagePainter: Painter? = null,
     drawWithCardOutline : Boolean = true
 ) {
     Card(
@@ -55,13 +54,15 @@ fun CardLinkPreview(
             modifier = Modifier
                 .padding(8.dp)
         ) {
-            Image(
-                painter = imagePainter,
-                contentDescription = stringResource(R.string.link_photo),
-                modifier = Modifier
-                    .fillMaxWidth(0.2f)
-                    .height(50.dp)
-            )
+            if(imagePainter != null) {
+                Image(
+                    painter = imagePainter,
+                    contentDescription = stringResource(R.string.link_photo),
+                    modifier = Modifier
+                        .fillMaxWidth(0.2f)
+                        .height(50.dp)
+                )
+            }
             Column {
                 Text(
                     text = openGraphMetaData.title,
