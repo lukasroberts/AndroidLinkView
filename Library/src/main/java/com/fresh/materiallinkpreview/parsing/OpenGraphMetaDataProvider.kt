@@ -17,20 +17,24 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
 
     override suspend fun startFetchingMetadataAsync(link: URL): Result<OpenGraphMetaData> {
         return withContext(Dispatchers.IO) {
-            try{
+            try {
                 val metaData = startFetchingMetadata(link)
                 return@withContext Result.success(metaData)
-            } catch(e : Exception) {
+            } catch (e: Exception) {
                 return@withContext Result.failure(e)
             }
         }
     }
 
     override fun startFetchingMetadata(link: URL): OpenGraphMetaData {
+        if (link.isImage()) {
+            return OpenGraphMetaData("", link.toString(), link.toString(), "website")
+        }
+
         // first only, get the head element of the webpage, as we do not want to download the entire thing!
         var httpUrlConnection = link.openConnection() as HttpURLConnection
 
-        if(link.protocol == "http") {
+        if (link.protocol == "http") {
             // check for any potential re-directs and perform them
             var redirect = false
 
@@ -38,29 +42,32 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
             if (httpUrlConnection.responseCode != HttpURLConnection.HTTP_OK) {
                 if (httpUrlConnection.responseCode == HttpURLConnection.HTTP_MOVED_TEMP
                     || httpUrlConnection.responseCode == HttpURLConnection.HTTP_MOVED_PERM
-                    || httpUrlConnection.responseCode == HttpURLConnection.HTTP_SEE_OTHER){
+                    || httpUrlConnection.responseCode == HttpURLConnection.HTTP_SEE_OTHER
+                ) {
                     redirect = true
                 }
             }
 
-            if(redirect) {
+            if (redirect) {
                 val redirectUrl = httpUrlConnection.getHeaderField("Location")
 
-                if(!redirectUrl.isNullOrEmpty()) {
+                if (!redirectUrl.isNullOrEmpty()) {
                     httpUrlConnection = URL(redirectUrl).openConnection() as HttpURLConnection
                 }
             }
         }
 
         val charset = getConnectionCharset(httpUrlConnection)
-        val bufferedInput = BufferedReader(InputStreamReader(httpUrlConnection.inputStream, charset))
+        val bufferedInput =
+            BufferedReader(InputStreamReader(httpUrlConnection.inputStream, charset))
         val bufferedHeadContents = StringBuffer()
 
         while (true) {
             var inputLine = bufferedInput.readLine() ?: break
 
             if (inputLine.contains(CLOSING_HEAD_STRING)) {
-                val indexOfClose = inputLine.indexOf(CLOSING_HEAD_STRING) + CLOSING_HEAD_STRING.length
+                val indexOfClose =
+                    inputLine.indexOf(CLOSING_HEAD_STRING) + CLOSING_HEAD_STRING.length
                 inputLine = inputLine.substring(0, indexOfClose)
                 inputLine = inputLine.plus("<body></body></html>")
                 bufferedHeadContents.append(inputLine + "\r\n")
@@ -76,7 +83,7 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
         var hasOpenGraphSpecification = false
 
         // try and identify any namespace information if it exists
-        if(document.head().hasAttr("prefix")) {
+        if (document.head().hasAttr("prefix")) {
             val prefixElements = document.head().getElementsByAttribute("prefix").html()
             val pattern = Pattern.compile("(([A-Za-z0-9_]+):\\s+(https://ogp.me/ns(/\\w+)*#))\\s*")
             val matcher = pattern.matcher(prefixElements)
@@ -85,7 +92,7 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
                 val prefix = matcher.group(2)
                 val documentUri = matcher.group(3)
 
-                if(!prefix.isNullOrEmpty() && !documentUri.isNullOrEmpty()) {
+                if (!prefix.isNullOrEmpty() && !documentUri.isNullOrEmpty()) {
                     pageNamespaces.add(OpenGraphNamespace(prefix, documentUri))
                 }
 
@@ -94,7 +101,7 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
         }
 
         // if no namespace information exists, add some defaults
-        if(!hasOpenGraphSpecification) {
+        if (!hasOpenGraphSpecification) {
             pageNamespaces.add(OpenGraphNamespace("og", "https://ogp.me/ns#"))
         }
 
@@ -108,21 +115,23 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
             for (namespace in pageNamespaces) {
                 var target = ""
 
-                if(metaElement.hasAttr("property")) {
+                if (metaElement.hasAttr("property")) {
                     target = "property"
-                } else if(metaElement.hasAttr("name")) {
+                } else if (metaElement.hasAttr("name")) {
                     target = "name"
                 }
 
-                if(target.isNotEmpty()
-                    && metaElement.attr(target).startsWith(namespace.prefix + ":")) {
+                if (target.isNotEmpty()
+                    && metaElement.attr(target).startsWith(namespace.prefix + ":")
+                ) {
 
-                    when(metaElement.attr(target)) {
+                    when (metaElement.attr(target)) {
                         "og:title" -> openGraphMetaData.title = metaElement.attr("content")
                         "og:type" -> openGraphMetaData.type = metaElement.attr("content")
                         "og:image" -> openGraphMetaData.imageUrl = metaElement.attr("content")
                         "og:url" -> openGraphMetaData.url = metaElement.attr("content")
-                        "og:description" -> openGraphMetaData.description = metaElement.attr("content")
+                        "og:description" -> openGraphMetaData.description =
+                            metaElement.attr("content")
                     }
 
                     break
@@ -130,11 +139,11 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
             }
         }
 
-        if(openGraphMetaData.title.isEmpty() && titleElement.count() == 1) {
+        if (openGraphMetaData.title.isEmpty() && titleElement.count() == 1) {
             openGraphMetaData.title = titleElement[0].childNode(0).toString()
         }
 
-        if(openGraphMetaData.url.isEmpty()) {
+        if (openGraphMetaData.url.isEmpty()) {
             openGraphMetaData.url = link.toString()
         }
 
@@ -196,6 +205,19 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
         }
 
         return null
+    }
+
+    fun URL.isImage(): Boolean {
+        val possible = arrayOf(".gif", ".jpg", ".jpeg", ".png", ".bmp", ".tiff")
+
+        val index = this.path.lastIndexOf(".")
+
+        if(index == -1) {
+            return false
+        }
+
+        val extension: String = this.path.substring(index)
+        return possible.contains(extension)
     }
 
     companion object {

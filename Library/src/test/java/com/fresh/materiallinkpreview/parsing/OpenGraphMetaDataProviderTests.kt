@@ -9,6 +9,38 @@ class OpenGraphMetaDataProviderTests {
     private val metaDataProvider : IOpenGraphMetaDataProvider = OpenGraphMetaDataProvider()
 
     @Test
+    fun `parsing works as intended with a music link` () {
+
+    }
+
+    @Test
+    fun `parsing works as intended with a video link` () {
+
+    }
+
+    @Test
+    fun `parsing works as intended with an image link` () {
+        val metadata = metaDataProvider.startFetchingMetadata(java.net.URL("https://storage.googleapis.com/gd-wagtail-prod-assets/original_images/evolving_google_identity_2x1.jpg"))
+
+        assertThat(metadata.url).isEqualTo("https://storage.googleapis.com/gd-wagtail-prod-assets/original_images/evolving_google_identity_2x1.jpg")
+        assertThat(metadata.title).isEqualTo("")
+        assertThat(metadata.type).isEqualTo("website")
+        assertThat(metadata.imageUrl).isEqualTo("https://storage.googleapis.com/gd-wagtail-prod-assets/original_images/evolving_google_identity_2x1.jpg")
+        assertThat(metadata.description).isNull()
+    }
+
+    @Test
+    fun `parsing works as intended with the Google Homepage` () {
+        val metadata = metaDataProvider.startFetchingMetadata(java.net.URL("https://www.google.com"))
+
+        assertThat(metadata.url).isEqualTo("https://www.google.com")
+        assertThat(metadata.title).isEqualTo("Google")
+        assertThat(metadata.type).isEqualTo("")
+        assertThat(metadata.imageUrl).isEqualTo("")
+        assertThat(metadata.description).isNull()
+    }
+
+    @Test
     fun `parsing works as intended with the BBC Homepage` () {
         val metadata = metaDataProvider.startFetchingMetadata(java.net.URL("https://www.bbc.co.uk"))
 

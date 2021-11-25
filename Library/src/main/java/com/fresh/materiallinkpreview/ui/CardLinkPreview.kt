@@ -59,6 +59,7 @@ fun CardLinkPreview(
                     painter = imagePainter,
                     contentDescription = stringResource(R.string.link_photo),
                     modifier = Modifier
+                        .padding(top = 4.dp)
                         .fillMaxWidth(0.2f)
                         .height(50.dp)
                 )
