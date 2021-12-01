@@ -2,9 +2,9 @@
 A Jetpack Compose Library for Rich URL Previews on Android.
 
 This library does not support downloading images or displaying them. However, we expose 
-an ImageView and an ImageUri (If we were able to grab it) for you to do what you wish with
+an Image Painter and an array of ImageUri's that are picked up via parsing (If we were able to grab it) for you to do what you wish with
 based on whichever image library you are using. We have shown an example of how to do this
-in the sample project with one of the most popular image libraries Glide. 
+in the sample project with a popular image library named Coil (https://coil-kt.github.io/coil/).
 This also shows how to cache the image in combination with this library, if that is something that you wish to do.
 
 If you would like to create previews for HTTP requests then simply add:
