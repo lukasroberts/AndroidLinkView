@@ -19,7 +19,7 @@ class OpenGraphMetaDataProviderTests {
         bbcHeader = ClassLoader.getSystemResource("bbc-header.html").readText()
         googleHeader = ClassLoader.getSystemResource("google-header.html").readText()
 
-        mockHtmlHeadParser = mockk<IHtmlHeadParser>()
+        mockHtmlHeadParser = mockk()
         metaDataProvider = OpenGraphMetaDataProvider(mockHtmlHeadParser)
     }
 

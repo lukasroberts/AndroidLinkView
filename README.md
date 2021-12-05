@@ -15,4 +15,7 @@ to your manifest file. We do not add this to the library, since it is insecure a
 
 We also handle redirects in the case that a site has one back to a HTTPS site.
 
-Note that this also works without Jetpack Compose with the "old" way. Those views are built with Constraint Layout for efficiency.
+
+Things To Do:
+
+1. Flat surface / not in card, for things like when you have a link preview in a chat (common case)
