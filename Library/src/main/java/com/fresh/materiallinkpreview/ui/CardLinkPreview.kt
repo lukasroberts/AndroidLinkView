@@ -11,10 +11,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,20 +38,25 @@ private fun PreviewCardLink() {
                 imageUrl = "",
                 type = ""
             ),
-            imagePainter = painterResource(R.drawable.ic_baseline_photo_24))
+            CardLinkPreviewProperties.Builder(
+                true,
+                2,
+                5,
+                1,
+                painterResource(R.drawable.ic_baseline_photo_24)
+            ).build()
+        )
     }
 }
 
 @Composable
 fun CardLinkPreview(
     openGraphMetaData: OpenGraphMetaData,
-    modifier: Modifier = Modifier,
-    imagePainter: Painter? = null,
-    drawWithCardOutline : Boolean = true
+    cardLinkPreviewProperties: CardLinkPreviewProperties = CardLinkPreviewProperties.Builder().build()
 ) {
     val context = LocalContext.current
 
-    if(drawWithCardOutline) {
+    if (cardLinkPreviewProperties.drawWithCardOutline) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,23 +67,25 @@ fun CardLinkPreview(
                 },
             elevation = 10.dp
         ) {
-            BaseCardLinkPreview(openGraphMetaData, imagePainter)
+            BaseCardLinkPreview(openGraphMetaData, cardLinkPreviewProperties)
         }
     } else {
-        BaseCardLinkPreview(openGraphMetaData, imagePainter)
+        BaseCardLinkPreview(openGraphMetaData, cardLinkPreviewProperties)
     }
 }
 
 @Composable
-fun BaseCardLinkPreview(openGraphMetaData: OpenGraphMetaData,
-                        imagePainter: Painter? = null) {
+fun BaseCardLinkPreview(
+    openGraphMetaData: OpenGraphMetaData,
+    cardLinkPreviewProperties: CardLinkPreviewProperties
+) {
     Row(
         modifier = Modifier
             .padding(8.dp)
     ) {
-        if(imagePainter != null) {
+        if (cardLinkPreviewProperties.imagePainter != null) {
             Image(
-                painter = imagePainter,
+                painter = cardLinkPreviewProperties.imagePainter,
                 contentDescription = stringResource(R.string.link_photo),
                 modifier = Modifier
                     .padding(top = 4.dp)
@@ -91,7 +98,9 @@ fun BaseCardLinkPreview(openGraphMetaData: OpenGraphMetaData,
                 text = openGraphMetaData.title,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                maxLines = cardLinkPreviewProperties.maxNumberOfLinesForTitle,
+                overflow = TextOverflow.Ellipsis
             )
 
             val description = openGraphMetaData.description
@@ -102,7 +111,9 @@ fun BaseCardLinkPreview(openGraphMetaData: OpenGraphMetaData,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 2.dp, bottom = 0.dp, start = 0.dp, end = 0.dp),
-                    color = Color.Gray
+                    color = Color.Gray,
+                    maxLines = cardLinkPreviewProperties.maxNumberOfLinesForDescription,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -112,7 +123,9 @@ fun BaseCardLinkPreview(openGraphMetaData: OpenGraphMetaData,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 6.dp, bottom = 0.dp, start = 0.dp, end = 0.dp),
-                fontSize = 8.sp
+                fontSize = 8.sp,
+                maxLines = cardLinkPreviewProperties.maxNumberOfLinesForUrl,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
