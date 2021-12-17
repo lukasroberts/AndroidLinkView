@@ -1,12 +1,12 @@
 package com.fresh.materiallinkpreview
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fresh.materiallinkpreview.models.OpenGraphMetaData
 import com.fresh.materiallinkpreview.ui.CardLinkPreview
+import com.fresh.materiallinkpreview.ui.CardLinkPreviewProperties
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,7 +29,14 @@ class CardLinkPreviewTests {
     fun setup() {
         composeTestRule.setContent {
             CardLinkPreview(
-                painterResource(R.drawable.ic_baseline_photo_24), openGraphMetaData, MaterialTheme
+                openGraphMetaData,
+                CardLinkPreviewProperties.Builder(
+                    true,
+                    2,
+                    5,
+                    1,
+                    painterResource(R.drawable.ic_baseline_photo_24)
+                ).build()
             )
         }
     }
