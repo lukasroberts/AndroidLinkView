@@ -62,11 +62,16 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
         // if no namespace information exists, add some defaults
         if (!hasOpenGraphSpecification) {
             _pageNamespaces.add(OpenGraphNamespace("og", "https://ogp.me/ns#"))
+            _pageNamespaces.add(OpenGraphNamespace("twitter", ""))
         }
 
         val metaElements = document.head().getElementsByTag("meta")
         val titleElement = document.head().getElementsByTag("title")
         val openGraphMetaData = OpenGraphMetaData()
+
+        var twitterTitle : String? = null
+        var twitterDescription : String? = null
+        var twitterImageUrl : String? = null
 
         // go through every meta element that we have collected, and try to identify any open graph tags
         // once we have identified them, sort them appropriately into the data structure
@@ -83,7 +88,6 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
                 if (target.isNotEmpty()
                     && metaElement.attr(target).startsWith(namespace.prefix + ":")
                 ) {
-
                     when (metaElement.attr(target)) {
                         "og:title" -> openGraphMetaData.title = metaElement.attr("content")
                         "og:type" -> openGraphMetaData.type = metaElement.attr("content")
@@ -91,6 +95,9 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
                         "og:url" -> openGraphMetaData.url = metaElement.attr("content")
                         "og:description" -> openGraphMetaData.description =
                             metaElement.attr("content")
+                        "twitter:title" -> twitterTitle = metaElement.attr("content")
+                        "twitter:description" -> twitterDescription = metaElement.attr("content")
+                        "twitter:image" -> twitterImageUrl = metaElement.attr("content")
                     }
 
                     break
@@ -104,6 +111,19 @@ class OpenGraphMetaDataProvider : IOpenGraphMetaDataProvider {
 
         if (openGraphMetaData.url.isEmpty()) {
             openGraphMetaData.url = link.toString()
+        }
+
+        // if the title, description or imageUrl have not been found, assign via twitter tags, that we may have collected
+        if(openGraphMetaData.title.isEmpty() && !twitterTitle.isNullOrEmpty()) {
+            openGraphMetaData.title = twitterTitle
+        }
+
+        if(openGraphMetaData.description.isNullOrEmpty() && !twitterDescription.isNullOrEmpty()) {
+            openGraphMetaData.description = twitterDescription
+        }
+
+        if(openGraphMetaData.imageUrl.isEmpty() && !twitterImageUrl.isNullOrEmpty()) {
+            openGraphMetaData.imageUrl = twitterImageUrl
         }
 
         return openGraphMetaData
