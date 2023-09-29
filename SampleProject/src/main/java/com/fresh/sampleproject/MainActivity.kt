@@ -22,14 +22,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.fresh.materiallinkpreview.models.OpenGraphMetaData
+import com.fresh.materiallinkpreview.parsing.OpenGraphMetaDataProvider
 import com.fresh.materiallinkpreview.ui.CardLinkPreview
 import com.fresh.materiallinkpreview.ui.CardLinkPreviewProperties
 import com.fresh.sampleproject.ui.theme.MaterialLinkPreviewTheme
-import dagger.hilt.android.AndroidEntryPoint
+//import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
+//@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: MainActivityViewModel by viewModels()
+//    private val viewModel: MainActivityViewModel by viewModels()
+    private val viewModel: MainActivityViewModel = MainActivityViewModel(OpenGraphMetaDataProvider())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

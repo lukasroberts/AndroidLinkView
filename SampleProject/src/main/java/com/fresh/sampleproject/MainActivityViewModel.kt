@@ -6,14 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fresh.materiallinkpreview.models.OpenGraphMetaData
 import com.fresh.materiallinkpreview.parsing.IOpenGraphMetaDataProvider
-import dagger.hilt.android.lifecycle.HiltViewModel
+//import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.net.URL
-import javax.inject.Inject
+//import javax.inject.Inject
 
-@HiltViewModel
+//@HiltViewModel
 class MainActivityViewModel
-@Inject constructor(private val openGraphMetaDataProvider : IOpenGraphMetaDataProvider) : ViewModel() {
+//@Inject
+ constructor(private val openGraphMetaDataProvider : IOpenGraphMetaDataProvider) : ViewModel() {
     private val _metaDataList : MutableLiveData<List<OpenGraphMetaData>> = MutableLiveData()
     val metaDataList : LiveData<List<OpenGraphMetaData>> = _metaDataList
 
