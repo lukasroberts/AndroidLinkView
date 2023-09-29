@@ -1,17 +1,17 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+//    id 'com.google.dagger.hilt.android'
 }
 
 android {
-    compileSdk 31
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.fresh.sampleproject"
         minSdk 21
-        targetSdk 31
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -33,20 +33,19 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-        useIR = true
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.5.31'
+        kotlinCompilerExtensionVersion '1.5.3'
     }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    namespace 'com.fresh.sampleproject'
 }
 
 dependencies {
@@ -62,8 +61,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
     implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
 
-    implementation "com.google.dagger:hilt-android:2.38.1"
-    kapt "com.google.dagger:hilt-compiler:2.38.1"
+//    implementation "com.google.dagger:hilt-android:2.40.1"
+//    kapt "com.google.dagger:hilt-compiler:2.40.1"
+
+//    implementation "com.google.dagger:hilt-android:2.44"
+//    kapt "com.google.dagger:hilt-compiler:2.44"
 
     // coil for images
     def coil_version = "1.4.0"
@@ -78,4 +80,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+}
+
+kapt {
+    correctErrorTypes true
 }
