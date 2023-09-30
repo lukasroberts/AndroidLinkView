@@ -10,6 +10,8 @@ android {
     defaultConfig {
         minSdk 21
         targetSdk 34
+        versionCode 2
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -91,7 +93,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.lukasroberts'
                 artifactId = 'android-link-view'
-                version = '1.0.0'
+                version = '2.0.0'
             }
         }
     }
